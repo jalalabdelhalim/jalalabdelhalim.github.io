@@ -20,139 +20,207 @@
             margin: 0 auto;
             padding: 40px 20px;
             line-height: 1.6;
+            overflow-x: hidden;
         }
         a { color: var(--accent-color); text-decoration: none; }
         a:hover { text-decoration: underline; }
+        
         header { text-align: center; margin-bottom: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 30px; }
+        .profile-img {
+            width: 180px; height: 180px; border-radius: 50%; object-fit: cover;
+            border: 4px solid var(--accent-color); margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(77, 166, 255, 0.2);
+        }
         h1 { margin: 0; font-size: 2.5em; letter-spacing: 1px; }
         .contact-info { margin-top: 10px; font-size: 0.9em; color: #aaa; }
+        
         h2 { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 40px; }
         h3 { margin-bottom: 5px; }
         .date { font-size: 0.9em; color: #888; font-style: italic; }
         ul { margin-top: 5px; padding-left: 20px; }
         li { margin-bottom: 8px; }
-        .publication { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); }
-        .publication p { margin: 10px 0; font-size: 0.95em; }
         
-        /* Form Styling */
-        #ai-section { margin-top: 60px; padding: 25px; background: var(--card-bg); border-radius: 10px; border: 2px solid var(--accent-color); }
+        .publication { 
+            background: var(--card-bg); padding: 20px; border-radius: 8px; 
+            margin-bottom: 20px; border: 1px solid var(--border-color); 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .publication:hover { transform: translateY(-2px); border-color: #555; }
+        .badge { background: var(--accent-color); color: #121212; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }
+        
+        #ai-section { margin-top: 60px; padding: 30px; background: var(--card-bg); border-radius: 10px; border: 2px solid var(--accent-color); }
         form { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
-        input, textarea { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px; font-family: inherit; box-sizing: border-box; }
-        button { background: var(--accent-color); color: #121212; border: none; padding: 12px; font-weight: bold; font-size: 1em; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #3388dd; }
+        textarea { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px; font-family: inherit; box-sizing: border-box; resize: vertical; }
+        button { background: var(--accent-color); color: #121212; border: none; padding: 14px; font-weight: bold; font-size: 1.1em; border-radius: 5px; cursor: pointer; }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        #terminal-window {
+            display: none; background-color: #050505; color: #00ff00;
+            font-family: "Courier New", Courier, monospace; padding: 15px;
+            border-radius: 5px; margin-top: 20px; font-size: 0.95em;
+            height: 250px; overflow-y: auto; border: 1px solid #333;
+        }
+        .terminal-line { margin-bottom: 5px; }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-    <header>
+    <header class="fade-in">
+        <img src="profile.jpeg" alt="Jalal Abdel Halim" class="profile-img">
         <h1>Jalal Abdel Halim</h1>
         <div class="contact-info">
-            jabdelh@rockets.utoledo.edu | <a href="https://www.linkedin.com/in/jalalabdelhalim" target="_blank">LinkedIn</a>
+            jalalabdelhalim1@gmail.com | <a href="https://www.linkedin.com/in/jalalabdelhalim" target="_blank">LinkedIn</a>
         </div>
     </header>
 
-    <section id="summary">
-        <p>Computer Science PhD candidate with a Master's in Cyber Security, focusing on adversarial machine learning and practical security operations. Experienced in building internal automation tools and prototyping AI-powered workflows utilizing local LLMs.</p>
+    <section id="summary" class="fade-in">
+        <p style="font-size: 1.1em; border-left: 4px solid var(--accent-color); padding-left: 15px;">
+            PhD Candidate in Computer Science specializing in Cyber Security and Machine Learning. Proficient in setting up and managing Proxmox servers and deploying containerized solutions. Skilled in Linux command-line operations, system administration, and automation.
+        </p>
     </section>
 
-    <section id="education">
+    <section id="education" class="fade-in">
         <h2>Education</h2>
-        
         <h3>Doctor of Philosophy - PhD, Computer Science</h3>
         <p>University of Toledo, Toledo, OH <br> <span class="date">2023 - May 2028 (Expected)</span> | GPA: 3.8/4.0</p>
-
         <h3>Master of Science in Cyber Security</h3>
         <p>University of Toledo, Toledo, OH <br> <span class="date">2021 - May 2023</span> | GPA: 3.7/4.0</p>
-
         <h3>Bachelor of Science in Information Technology</h3>
         <p>University of Toledo, Toledo, OH <br> <span class="date">2017 - 2021</span> | GPA: 3.5/4.0</p>
     </section>
 
-    <section id="experience">
-        <h2>Experience</h2>
-        
-        <h3>Research/Teaching Assistant</h3>
-        <p>The University of Toledo, Toledo, OH <br> <span class="date">Aug 2021 – Present</span></p>
-        <ul>
-            <li>Managed concurrent environments and access for 55+ active users across two courses, ensuring secure and reliable daily operations.</li>
-            <li>Streamlined backend lab infrastructure, reducing environment setup time from several hours to under 30 minutes to improve operational efficiency.</li>
-            <li>Developed a real-time detection tool utilizing data analysis to identify issues and protect end-users from threats.</li>
-            <li>Administered daily system configurations and handled routine hardware and network troubleshooting.</li>
-            <li>Provided hands-on troubleshooting and support for students, evaluating assignments and communicating complex concepts clearly.</li>
-        </ul>
-
-        <h3>Information Technology Intern</h3>
-        <p>O-I, Perrysburg, OH <br> <span class="date">May 2022 – Aug 2022</span></p>
-        <ul>
-            <li>Developed automated scripts to extract data, significantly improving administrative task efficiency and overall accuracy.</li>
-            <li>Analyzed data from multiple internal systems (Rapid7, ServiceNow) to create detailed reports utilizing PowerBI.</li>
-            <li>Utilized specialized software platforms to effectively manage access points and maintain secure device operations.</li>
-            <li>Conducted meetings and collaborated directly with global team members to coordinate personal and group projects.</li>
-        </ul>
-    </section>
-
     <section id="publications">
-        <h2>Publications</h2>
-        
-        <div class="publication">
+        <h2 class="fade-in">Publications & Thesis</h2>
+
+        <div class="publication fade-in">
+            <strong><span class="badge">Master's Thesis</span> Towards Building a Versatile Tool for Social Media Spam Detection</strong><br>
+            <span class="date">J. Abdel Halim | University of Toledo, 2023.</span>
+            <a href="https://etd.ohiolink.edu/acprod/odb_etd/ws/send_file/send?accession=toledo1683279391214158&disposition=inline" target="_blank">Read Thesis &rarr;</a>
+        </div>
+
+        <div class="publication fade-in">
             <strong>Investigating the Influence of Black-Box Adversarial Machine Learning Attacks in Live Network Environments</strong><br>
-            <span class="date">U. B. Guntupalli, M. Pujari, J. Abdel Halim, W. Sun | ICISSP, SciTePress, pp. 462-473, 2026.</span>
-            <p>Implemented a live network validation pipeline to evaluate the robustness of machine learning-based intrusion detection systems against black-box adversarial attacks.</p>
-            <a href="YOUR_LINK_HERE" target="_blank">View Paper &rarr;</a>
+            <span class="date">U. B. Guntupalli, M. Pujari, J. Abdel Halim, W. Sun | ICISSP, 2026.</span>
+            <a href="https://www.scitepress.org/Papers/2026/146389/146389.pdf" target="_blank">View Paper &rarr;</a>
         </div>
 
-        <div class="publication">
-            <strong>A Cost-Effective Tool for Senior Activity</strong><br>
-            <span class="date">J. Abdel Halim, W. Sun | AIR-RES 2025, Springer Nature, p. 267, Jan. 2026.</span>
-            <p>Developed a privacy-preserving tracking system featuring a custom web interface and 3D data visualization to remotely monitor daily activities.</p>
-            <a href="YOUR_LINK_HERE" target="_blank">View Paper &rarr;</a>
+        <div class="publication fade-in">
+            <strong>A Cost-Effective Tool for Senior Activity Classification and Visualization</strong><br>
+            <span class="date">J. Abdel Halim, W. Sun | AIR-RES 2025, Jan. 2026.</span>
+            <a href="https://link.springer.com/chapter/10.1007/978-3-032-13056-3_20" target="_blank">View Paper &rarr;</a>
         </div>
 
-        <div class="publication">
+        <div class="publication fade-in">
             <strong>Empowering users with an effective tool for social media spam detection</strong><br>
-            <span class="date">J. Abdel Halim, W. Sun | Cybersecurity: Cyber Defense, Privacy and Cyber Warfare, De Gruyter Brill, pp. 333-354, Nov. 2025.</span>
-            <p>Engineered an end-to-end machine learning pipeline capable of multimodal (text, image, and video) spam detection across various platforms.</p>
-            <a href="YOUR_LINK_HERE" target="_blank">View Paper &rarr;</a>
+            <span class="date">J. Abdel Halim, W. Sun | De Gruyter Brill, Nov. 2025.</span>
+            <a href="https://books.google.com/books?hl=en&lr=&id=j3aaEQAAQBAJ&oi=fnd&pg=PA333&dq=info:lKOFTOCUy8wJ:scholar.google.com&ots=J2ofXLr-w_&sig=bQKO0ylwIr6LMyCJMaxtIHbFyrM#v=onepage&q&f=false" target="_blank">View Chapter &rarr;</a>
         </div>
 
-        <div class="publication">
-            <strong>Towards building a versatile tool for social media spam detection</strong><br>
-            <span class="date">J. Abdel Halim, W. Sun | CSCE, IEEE, pp. 2378-2384, Jul. 2023.</span>
-            <p>Designed and trained machine learning classifiers to process social media text and images in real-time, providing users with proactive security alerts.</p>
-            <a href="YOUR_LINK_HERE" target="_blank">View Paper &rarr;</a>
+        <div class="publication fade-in">
+            <strong>Towards building a versatile tool for social media spam detection (Conference)</strong><br>
+            <span class="date">J. Abdel Halim, W. Sun | CSCE, IEEE, Jul. 2023.</span>
+            <a href="https://ieeexplore.ieee.org/abstract/document/10487569" target="_blank">View Paper &rarr;</a>
         </div>
     </section>
 
-    <section id="skills">
-        <h2>Skills</h2>
-        <ul>
-            <li><strong>Infrastructure:</strong> Proxmox, Containerization, Kali Linux, Ubuntu Server, ESXi</li>
-            <li><strong>Security:</strong> Penetration Testing, Fortinet, FortiNAC, Rapid7</li>
-            <li><strong>Languages/Tools:</strong> Python, Java, Machine Learning, PowerBI, Selenium</li>
-        </ul>
-    </section>
-
-    <section id="honors">
-        <h2>Honors & Awards</h2>
-        <p><strong>College of Engineering Dean’s List</strong> - Associate Dean of Undergraduate Studies <br> <span class="date">May 2021</span></p>
-    </section>
-
-    <section id="ai-section">
-        <h2>Talk to my Digital Clone</h2>
-        <p>Drop a question below. My local AI model will process your inquiry and email you a response within two minutes based entirely on my background, research, and expertise.</p>
-        
-        <!-- Replace YOUR_DATABASE_WEBHOOK_URL with your Supabase/Firebase/Formspree link -->
-        <form action="YOUR_DATABASE_WEBHOOK_URL" method="POST">
-            <input type="email" name="email" required placeholder="Your Email (e.g., name@domain.com)">
-            <input type="text" name="subject" required placeholder="Subject">
-            <textarea name="message" rows="4" required placeholder="Ask my AI a question..."></textarea>
-            <button type="submit">Ping Local Server</button>
+    <section id="ai-section" class="fade-in">
+        <h2>Talk to my Digital Clone (Local Inference)</h2>
+        <form id="ai-form">
+            <textarea id="user-message" rows="3" required placeholder="Query my local node..."></textarea>
+            <button type="submit" id="submit-btn">Run Inference</button>
         </form>
+        <div id="terminal-window"></div>
     </section>
 
-    <footer style="text-align: center; margin-top: 50px; font-size: 0.8em; color: #666;">
-        &copy; 2026 Jalal Abdel Halim. Hosted on GitHub Pages.
+    <footer class="fade-in" style="text-align: center; margin-top: 50px; padding-bottom: 20px; font-size: 0.9em; color: #666;">
+        &copy; 2026 Jalal Abdel Halim. All rights reserved.
     </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fade-in animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            const form = document.getElementById('ai-form');
+            const terminal = document.getElementById('terminal-window');
+            const submitBtn = document.getElementById('submit-btn');
+            const messageInput = document.getElementById('user-message');
+
+            const printLine = async (text, delay = 500) => {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.innerHTML = `> ${text}`;
+                terminal.appendChild(line);
+                terminal.scrollTop = terminal.scrollHeight;
+                await new Promise(r => setTimeout(r, delay));
+            };
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const userText = messageInput.value.trim();
+                if (!userText) return;
+
+                terminal.style.display = 'block';
+                terminal.innerHTML = '';
+                submitBtn.disabled = true;
+
+                await printLine("Initializing secure WebSocket connection...");
+                await printLine("Sending text payload to local server...", 400);
+                await printLine("Text received! Raspberry Pi node active.", 400);
+                await printLine("Running local inference engine (phi3:mini)...", 600);
+                
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-line';
+                outputLine.innerHTML = `> <span style="color: var(--accent-color);">Output:</span> <span id="stream-out"></span>`;
+                terminal.appendChild(outputLine);
+                const outSpan = document.getElementById('stream-out');
+
+                try {
+                    const response = await fetch("https://staging-backpedal-eject.ngrok-free.dev/ask", {
+                        method: "POST",
+                        headers: { 
+                            "Content-Type": "application/json",
+                            "ngrok-skip-browser-warning": "true" 
+                        },
+                        body: JSON.stringify({ prompt: userText })
+                    });
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        
+                        for (let line of lines) {
+                            if (line.trim()) {
+                                try {
+                                    const parsed = JSON.parse(line);
+                                    if (parsed.response) {
+                                        outSpan.textContent += parsed.response;
+                                        terminal.scrollTop = terminal.scrollHeight;
+                                    }
+                                } catch (e) { /* ignore chunk fragments */ }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    outSpan.textContent = "Error: Connection failed. Ensure the Pi and ngrok are online.";
+                }
+
+                await printLine("Inference complete. Connection closed.", 0);
+                submitBtn.disabled = false;
+                messageInput.value = '';
+            });
+        });
+    </script>
 </body>
 </html>
