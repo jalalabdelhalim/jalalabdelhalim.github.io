@@ -7,10 +7,12 @@
     <style>
         :root {
             --bg-color: #121212;
-            --text-color: #e0e0e0;
+            --text-color: #ECECEC;
             --accent-color: #4da6ff;
             --border-color: #333;
             --card-bg: #1e1e1e;
+            --chat-user-bg: #2f2f2f;
+            --chat-ai-bg: transparent;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -48,19 +50,122 @@
         .publication:hover { transform: translateY(-2px); border-color: #555; }
         .badge { background: var(--accent-color); color: #121212; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }
         
-        #ai-section { margin-top: 60px; padding: 30px; background: var(--card-bg); border-radius: 10px; border: 2px solid var(--accent-color); }
-        form { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
-        textarea { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 5px; font-family: inherit; box-sizing: border-box; resize: vertical; }
-        button { background: var(--accent-color); color: #121212; border: none; padding: 14px; font-weight: bold; font-size: 1.1em; border-radius: 5px; cursor: pointer; }
-        button:disabled { background: #555; cursor: not-allowed; }
-
-        #terminal-window {
-            display: none; background-color: #050505; color: #00ff00;
-            font-family: "Courier New", Courier, monospace; padding: 15px;
-            border-radius: 5px; margin-top: 20px; font-size: 0.95em;
-            height: 250px; overflow-y: auto; border: 1px solid #333;
+        /* Modern Chat UI Styles */
+        #ai-section { margin-top: 60px; padding: 30px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); }
+        
+        /* Chat Window Expanding Animation */
+        #chat-window {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            margin-top: 0;
+            max-height: 0; /* Hidden initially */
+            padding: 0 20px; /* Horizontal padding stays, vertical at 0 */
+            opacity: 0;
+            overflow: hidden; /* Prevent scrolling during animation */
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-sizing: border-box; 
+            transition: max-height 0.6s ease-in-out, padding 0.6s ease-in-out, opacity 0.6s ease-in-out, margin-top 0.6s ease-in-out, border-color 0.6s ease-in-out;
+            scroll-behavior: smooth;
         }
-        .terminal-line { margin-bottom: 5px; }
+
+        #chat-window.active {
+            max-height: 400px;
+            padding: 20px;
+            opacity: 1;
+            margin-top: 20px;
+            border-color: #333;
+            overflow-y: auto; /* Enable scroll once expanded */
+        }
+
+        /* Message Layout with Avatars */
+        .chat-message { display: flex; align-items: flex-end; gap: 10px; max-width: 85%; }
+        .user-message { align-self: flex-end; flex-direction: row-reverse; }
+        .ai-message { align-self: flex-start; flex-direction: row; }
+
+        /* Avatars */
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.85em; font-weight: bold; flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .user-avatar { background-color: #555; color: #fff; }
+        .ai-avatar { background-color: var(--accent-color); color: #121212; }
+
+        /* Message Bubbles */
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 0.95em;
+        }
+
+        .user-message .message-bubble {
+            background-color: var(--chat-user-bg);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai-message .message-bubble {
+            background-color: var(--chat-ai-bg);
+            color: #d1d5db;
+            border: 1px solid #444;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Input Area */
+        .input-container {
+            position: relative;
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        textarea { 
+            flex-grow: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95em;
+            resize: none;
+            outline: none;
+        }
+
+        button { 
+            background: #e0e0e0; 
+            color: #121212; 
+            border: none; 
+            padding: 0 20px; 
+            font-weight: 600; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.8; }
+        button:disabled { background: #555; color: #888; cursor: not-allowed; }
+
+        /* Thinking Animation & Timer inside the bubble */
+        .thinking-content {
+            color: #888;
+            font-style: italic;
+        }
+        .dots span { animation: blink 1.4s infinite both; }
+        .dots span:nth-child(2) { animation-delay: 0.2s; }
+        .dots span:nth-child(3) { animation-delay: 0.4s; }
+        .think-timer { margin-left: 5px; font-family: monospace; color: #666; }
+
+        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+
         .fade-in { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
@@ -126,12 +231,14 @@
     </section>
 
     <section id="ai-section" class="fade-in">
-        <h2>Talk to my Digital Clone (Local Inference)</h2>
-        <form id="ai-form">
-            <textarea id="user-message" rows="3" required placeholder="Query my local node..."></textarea>
-            <button type="submit" id="submit-btn">Run Inference</button>
-        </form>
-        <div id="terminal-window"></div>
+        <h2>Talk to my Digital Clone</h2>
+        
+        <div id="chat-window"></div>
+
+        <div class="input-container">
+            <textarea id="user-message" rows="1" required placeholder="Ask me anything..."></textarea>
+            <button type="button" id="submit-btn">Send</button>
+        </div>
     </section>
 
     <footer class="fade-in" style="text-align: center; margin-top: 50px; padding-bottom: 20px; font-size: 0.9em; color: #666;">
@@ -146,39 +253,73 @@
             }, { threshold: 0.15 });
             document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-            const form = document.getElementById('ai-form');
-            const terminal = document.getElementById('terminal-window');
+            const chatWindow = document.getElementById('chat-window');
             const submitBtn = document.getElementById('submit-btn');
             const messageInput = document.getElementById('user-message');
 
-            const printLine = async (text, delay = 500) => {
-                const line = document.createElement('div');
-                line.className = 'terminal-line';
-                line.innerHTML = `> ${text}`;
-                terminal.appendChild(line);
-                terminal.scrollTop = terminal.scrollHeight;
-                await new Promise(r => setTimeout(r, delay));
-            };
+            // Array to store conversation memory
+            let chatHistory = [];
+            let timerInterval;
 
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            const handleSubmission = async () => {
                 const userText = messageInput.value.trim();
                 if (!userText) return;
 
-                terminal.style.display = 'block';
-                terminal.innerHTML = '';
+                // 0. Expand chat window on first submission
+                if (!chatWindow.classList.contains('active')) {
+                    chatWindow.classList.add('active');
+                }
+
+                // 1. Add user message bubble
+                const userLine = document.createElement('div');
+                userLine.className = 'chat-message user-message';
+                userLine.innerHTML = `
+                    <div class="avatar user-avatar">U</div>
+                    <div class="message-bubble">${userText}</div>
+                `;
+                chatWindow.appendChild(userLine);
+
+                // Clear input and disable button
+                messageInput.value = '';
+                messageInput.style.height = 'auto'; // Reset textarea height
                 submitBtn.disabled = true;
 
-                await printLine("Initializing secure WebSocket connection...");
-                await printLine("Sending text payload to local server...", 400);
-                await printLine("Text received! Raspberry Pi node active.", 400);
-                await printLine("Running local inference engine (phi3:mini)...", 600);
+                // 2. Create the AI bubble immediately and fill it with the Thinking Animation
+                const aiLine = document.createElement('div');
+                aiLine.className = 'chat-message ai-message';
+                aiLine.innerHTML = `
+                    <div class="avatar ai-avatar">AI</div>
+                    <div class="message-bubble stream-out">
+                        <span class="thinking-content">Thinking<span class="dots"><span>.</span><span>.</span><span>.</span></span> <span class="think-timer">(0.0s)</span></span>
+                    </div>
+                `;
+                chatWindow.appendChild(aiLine);
+                const outSpan = aiLine.querySelector('.stream-out');
+                const timerSpan = aiLine.querySelector('.think-timer');
                 
-                const outputLine = document.createElement('div');
-                outputLine.className = 'terminal-line';
-                outputLine.innerHTML = `> <span style="color: var(--accent-color);">Output:</span> <span id="stream-out"></span>`;
-                terminal.appendChild(outputLine);
-                const outSpan = document.getElementById('stream-out');
+                setTimeout(() => { chatWindow.scrollTop = chatWindow.scrollHeight; }, 50);
+                
+                let startTime = Date.now();
+                timerInterval = setInterval(() => {
+                    if(timerSpan) timerSpan.textContent = "(" + ((Date.now() - startTime) / 1000).toFixed(1) + "s)";
+                }, 100);
+
+                // 3. Inject Context: Build prompt with history
+                const recentHistory = chatHistory.slice(-3);
+                let augmentedPrompt = "";
+                
+                if (recentHistory.length > 0) {
+                    augmentedPrompt += "[Recent Conversation Context]\n";
+                    recentHistory.forEach(msg => {
+                        augmentedPrompt += `User: ${msg.user}\nAI Clone: ${msg.ai}\n\n`;
+                    });
+                    augmentedPrompt += "[Current Query]\nUser: " + userText;
+                } else {
+                    augmentedPrompt = userText;
+                }
+
+                let fullAiResponse = "";
+                let isFirstChunk = true; // Flag to track when to delete the thinking animation
 
                 try {
                     const response = await fetch("https://staging-backpedal-eject.ngrok-free.dev/ask", {
@@ -187,7 +328,7 @@
                             "Content-Type": "application/json",
                             "ngrok-skip-browser-warning": "true" 
                         },
-                        body: JSON.stringify({ prompt: userText })
+                        body: JSON.stringify({ prompt: augmentedPrompt })
                     });
 
                     const reader = response.body.getReader();
@@ -197,6 +338,13 @@
                         const { done, value } = await reader.read();
                         if (done) break;
                         
+                        // As soon as the first piece of data arrives, wipe out the thinking animation
+                        if (isFirstChunk) {
+                            clearInterval(timerInterval);
+                            outSpan.innerHTML = ""; 
+                            isFirstChunk = false;
+                        }
+
                         const chunk = decoder.decode(value, { stream: true });
                         const lines = chunk.split('\n');
                         
@@ -206,19 +354,38 @@
                                     const parsed = JSON.parse(line);
                                     if (parsed.response) {
                                         outSpan.textContent += parsed.response;
-                                        terminal.scrollTop = terminal.scrollHeight;
+                                        fullAiResponse += parsed.response;
+                                        chatWindow.scrollTop = chatWindow.scrollHeight;
                                     }
-                                } catch (e) { /* ignore chunk fragments */ }
+                                } catch (e) { /* ignore fragment errors */ }
                             }
                         }
                     }
+
+                    // Save this interaction to memory
+                    chatHistory.push({ user: userText, ai: fullAiResponse });
+
                 } catch (error) {
-                    outSpan.textContent = "Error: Connection failed. Ensure the Pi and ngrok are online.";
+                    clearInterval(timerInterval);
+                    outSpan.innerHTML = "Error: Connection to node failed.";
                 }
 
-                await printLine("Inference complete. Connection closed.", 0);
                 submitBtn.disabled = false;
-                messageInput.value = '';
+            };
+
+            submitBtn.addEventListener('click', handleSubmission);
+
+            // Auto-resize textarea and Enter key to submit
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight < 150 ? this.scrollHeight : 150) + 'px';
+            });
+
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmission();
+                }
             });
         });
     </script>
