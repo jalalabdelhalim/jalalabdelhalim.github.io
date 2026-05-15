@@ -36,6 +36,28 @@
         h1 { margin: 0; font-size: 2.5em; letter-spacing: 1px; }
         .contact-info { margin-top: 10px; font-size: 0.9em; color: #aaa; }
         
+        /* Resume Download Button */
+        .resume-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            border-radius: 6px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+        .resume-btn:hover {
+            background: var(--accent-color);
+            color: #121212;
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(77, 166, 255, 0.4);
+        }
+        
         h2 { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 40px; }
         h3 { margin-bottom: 5px; }
         .date { font-size: 0.9em; color: #888; font-style: italic; }
@@ -69,7 +91,6 @@
             gap: 15px;
             box-sizing: border-box; 
             transition: max-height 0.6s ease-in-out, padding 0.6s ease-in-out, opacity 0.6s ease-in-out, margin-top 0.6s ease-in-out, border-color 0.6s ease-in-out;
-            /* REMOVED scroll-behavior: smooth; to allow instant auto-scrolling during text streaming */
         }
 
         #chat-window.active {
@@ -179,6 +200,10 @@
         <div class="contact-info">
             jalalabdelhalim1@gmail.com | <a href="https://www.linkedin.com/in/jalalabdelhalim" target="_blank">LinkedIn</a>
         </div>
+        
+        <a href="resume.pdf" download="Jalal_Abdel_Halim_Resume.pdf" class="resume-btn">
+            ↓ Extract Resume Core
+        </a>
     </header>
 
     <section id="summary" class="fade-in">
