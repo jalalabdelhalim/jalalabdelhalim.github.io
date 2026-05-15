@@ -61,14 +61,15 @@
             max-height: 0; /* Hidden initially */
             padding: 0 20px; /* Horizontal padding stays, vertical at 0 */
             opacity: 0;
-            overflow: hidden; /* Prevent scrolling during animation */
+            overflow-x: hidden; 
+            overflow-y: hidden;
             border: 1px solid transparent;
             display: flex;
             flex-direction: column;
             gap: 15px;
             box-sizing: border-box; 
             transition: max-height 0.6s ease-in-out, padding 0.6s ease-in-out, opacity 0.6s ease-in-out, margin-top 0.6s ease-in-out, border-color 0.6s ease-in-out;
-            scroll-behavior: smooth;
+            /* REMOVED scroll-behavior: smooth; to allow instant auto-scrolling during text streaming */
         }
 
         #chat-window.active {
@@ -256,6 +257,7 @@
             const chatWindow = document.getElementById('chat-window');
             const submitBtn = document.getElementById('submit-btn');
             const messageInput = document.getElementById('user-message');
+            const aiSection = document.getElementById('ai-section');
 
             // Array to store conversation memory
             let chatHistory = [];
@@ -265,9 +267,12 @@
                 const userText = messageInput.value.trim();
                 if (!userText) return;
 
-                // 0. Expand chat window on first submission
+                // 0. Expand chat window on first submission and scroll page to keep it in view on mobile
                 if (!chatWindow.classList.contains('active')) {
                     chatWindow.classList.add('active');
+                    setTimeout(() => {
+                        aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 300); // Slight delay to let the CSS expansion start
                 }
 
                 // 1. Add user message bubble
@@ -297,7 +302,8 @@
                 const outSpan = aiLine.querySelector('.stream-out');
                 const timerSpan = aiLine.querySelector('.think-timer');
                 
-                setTimeout(() => { chatWindow.scrollTop = chatWindow.scrollHeight; }, 50);
+                // Instantly scroll the internal chat window to the bottom
+                chatWindow.scrollTop = chatWindow.scrollHeight;
                 
                 let startTime = Date.now();
                 timerInterval = setInterval(() => {
@@ -319,7 +325,7 @@
                 }
 
                 let fullAiResponse = "";
-                let isFirstChunk = true; // Flag to track when to delete the thinking animation
+                let isFirstChunk = true; 
 
                 try {
                     const response = await fetch("https://staging-backpedal-eject.ngrok-free.dev/ask", {
@@ -355,6 +361,7 @@
                                     if (parsed.response) {
                                         outSpan.textContent += parsed.response;
                                         fullAiResponse += parsed.response;
+                                        // Auto-scroll instantly follows the streaming text
                                         chatWindow.scrollTop = chatWindow.scrollHeight;
                                     }
                                 } catch (e) { /* ignore fragment errors */ }
@@ -371,6 +378,9 @@
                 }
 
                 submitBtn.disabled = false;
+                
+                // One final scroll to ensure the input field isn't hidden by a long response
+                aiSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
             };
 
             submitBtn.addEventListener('click', handleSubmission);
