@@ -306,17 +306,24 @@
                     if(timerSpan) timerSpan.textContent = "(" + ((Date.now() - startTime) / 1000).toFixed(1) + "s)";
                 }, 100);
 
-                const recentHistory = chatHistory.slice(-3);
+                // --- Context Injection Logic ---
                 let augmentedPrompt = "";
                 
-                if (recentHistory.length > 0) {
-                    augmentedPrompt += "[Recent Conversation Context]\n";
-                    recentHistory.forEach(msg => {
-                        augmentedPrompt += `User: ${msg.user}\nAI Clone: ${msg.ai}\n\n`;
-                    });
-                    augmentedPrompt += "[Current Query]\nUser: " + userText;
-                } else {
+                if (isWebMode) {
+                    // Bypass memory to speed up search and ensure the web agent only answers the current question
                     augmentedPrompt = userText;
+                } else {
+                    // Use history for Local Clone Mode
+                    const recentHistory = chatHistory.slice(-3);
+                    if (recentHistory.length > 0) {
+                        augmentedPrompt += "[Recent Conversation Context]\n";
+                        recentHistory.forEach(msg => {
+                            augmentedPrompt += `User: ${msg.user}\nAI Clone: ${msg.ai}\n\n`;
+                        });
+                        augmentedPrompt += "[Current Query]\nUser: " + userText;
+                    } else {
+                        augmentedPrompt = userText;
+                    }
                 }
 
                 let fullAiResponse = "";
@@ -362,6 +369,7 @@
                         }
                     }
 
+                    // Always save to memory so if the user toggles back to local, the clone remembers
                     chatHistory.push({ user: userText, ai: fullAiResponse });
 
                 } catch (error) {
