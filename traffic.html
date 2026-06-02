@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Traffic Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         body {
@@ -12,61 +11,121 @@
             background-color: #f4f7f6;
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
+            box-sizing: border-box;
         }
-        h2 { margin-top: 0; font-size: 22px; color: #2c3e50; }
-        p { font-size: 14px; color: #7f8c8d; line-height: 1.5; }
-        .stats {
+        h2 { margin-top: 0; font-size: 24px; color: #2c3e50; text-align: center; }
+        p { font-size: 15px; color: #7f8c8d; line-height: 1.5; text-align: center; margin-bottom: 25px; }
+        
+        .controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .control-group:last-child { margin-bottom: 0; }
+        label { font-size: 12px; font-weight: bold; color: #95a5a6; text-transform: uppercase; margin-bottom: 8px; }
+        
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background: white;
+            outline: none;
+        }
+        
+        input[type=range] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .stats-display {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
         }
-        .stat-box { text-align: center; width: 48%; }
-        .stat-num { font-size: 24px; font-weight: bold; color: #2980b9; }
-        .stat-label { font-size: 12px; color: #95a5a6; text-transform: uppercase; margin-top: 4px; }
-        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
+        .time-display { font-size: 28px; font-weight: bold; color: #2c3e50; }
+        .car-count { text-align: right; }
+        .car-count .num { font-size: 32px; font-weight: bold; color: #3498db; }
+        .car-count .label { font-size: 12px; color: #95a5a6; text-transform: uppercase; }
+
+        .canvas-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #7ed6df; /* Sky color */
+            position: relative;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 200px;
+        }
+
         #loading { text-align: center; color: #3498db; font-weight: bold; padding: 20px; }
+        #dashboard { display: none; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>Balcony Traffic Sensor 📸</h2>
-        <p>This dashboard automatically reads my computer vision logs to show how many cars drive by our place hour by hour.</p>
+        <p>Use the slider to see how busy the road gets at different times of the day based on my actual sensor data.</p>
         
-        <div id="loading">Loading and crunching data...</div>
+        <div id="loading">Loading traffic data...</div>
 
-        <div class="chart-container" style="display: none;" id="chartWrapper">
-            <canvas id="trafficChart"></canvas>
-        </div>
-
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-num" id="totalCars">0</div>
-                <div class="stat-label">Total Cars Logged</div>
+        <div id="dashboard">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="dateSelect">Select Date</label>
+                    <select id="dateSelect"></select>
+                </div>
+                <div class="control-group">
+                    <label for="hourSlider">Time of Day</label>
+                    <input type="range" id="hourSlider" min="0" max="23" value="12">
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-num" id="busiestDay">Loading</div>
-                <div class="stat-label">Busiest Day</div>
+
+            <div class="stats-display">
+                <div class="time-display" id="timeLabel">12:00 PM</div>
+                <div class="car-count">
+                    <div class="num" id="carLabel">0</div>
+                    <div class="label">Cars Detected</div>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="roadCanvas"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. Tell PapaParse to find the CSV file in the same folder
+        let trafficData = {}; 
+        let currentDate = "";
+        let currentHour = 12;
+        let currentCarsPerHour = 0;
+
+        // --- 1. DATA LOADING ---
         Papa.parse("traffic_log.csv", {
             download: true,
             header: true,
@@ -75,103 +134,181 @@
                 processData(results.data);
             },
             error: function(err) {
-                document.getElementById('loading').innerText = "Could not find traffic_log.csv! Make sure it is uploaded.";
+                document.getElementById('loading').innerText = "Could not find traffic_log.csv!";
             }
         });
 
         function processData(data) {
-            let totalVehicles = 0;
-            const hourlyByDate = {};
-            const dateTotals = {};
-
-            // 2. Loop through every row in the CSV
             data.forEach(row => {
                 if (!row.Timestamp) return;
-                
                 const dateObj = new Date(row.Timestamp);
-                if (isNaN(dateObj)) return; // Skip bad data
+                if (isNaN(dateObj)) return;
 
-                totalVehicles++;
-
-                // Format the date (e.g., "5/30/2026") and get the hour (0-23)
                 const dateStr = dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
                 const hour = dateObj.getHours();
 
-                // Setup the arrays if this is the first time seeing this date
-                if (!hourlyByDate[dateStr]) {
-                    hourlyByDate[dateStr] = Array(24).fill(0);
-                    dateTotals[dateStr] = 0;
-                }
-                
-                // Add a car to that specific day and hour
-                hourlyByDate[dateStr][hour]++;
-                dateTotals[dateStr]++;
+                if (!trafficData[dateStr]) trafficData[dateStr] = Array(24).fill(0);
+                trafficData[dateStr][hour]++;
             });
 
-            // 3. Find the busiest day
-            let maxDay = "";
-            let maxCount = 0;
-            for (const [day, count] of Object.entries(dateTotals)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    maxDay = day;
+            setupUI();
+        }
+
+        // --- 2. UI SETUP ---
+        function setupUI() {
+            const select = document.getElementById('dateSelect');
+            const dates = Object.keys(trafficData);
+            
+            if(dates.length === 0) {
+                document.getElementById('loading').innerText = "No valid data found in CSV.";
+                return;
+            }
+
+            dates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.innerText = date;
+                select.appendChild(option);
+            });
+
+            // Default to the last recorded day
+            currentDate = dates[dates.length - 1];
+            select.value = currentDate;
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+
+            select.addEventListener('change', (e) => {
+                currentDate = e.target.value;
+                updateStats();
+            });
+
+            document.getElementById('hourSlider').addEventListener('input', (e) => {
+                currentHour = parseInt(e.target.value);
+                updateStats();
+            });
+
+            updateStats();
+            initAnimation();
+        }
+
+        function updateStats() {
+            // Format 12-hour time
+            let ampm = currentHour >= 12 ? 'PM' : 'AM';
+            let displayHour = currentHour % 12;
+            if (displayHour === 0) displayHour = 12;
+            document.getElementById('timeLabel').innerText = `${displayHour}:00 ${ampm}`;
+
+            // Update car count
+            currentCarsPerHour = trafficData[currentDate][currentHour] || 0;
+            document.getElementById('carLabel').innerText = currentCarsPerHour;
+            
+            // Change background color based on time (Day vs Night cycle)
+            const canvasContainer = document.querySelector('.canvas-container');
+            if (currentHour >= 6 && currentHour <= 18) {
+                canvasContainer.style.background = '#7ed6df'; // Day sky
+            } else if (currentHour > 18 && currentHour <= 20) {
+                canvasContainer.style.background = '#f39c12'; // Dusk
+            } else {
+                canvasContainer.style.background = '#2c3e50'; // Night
+            }
+        }
+
+        // --- 3. ANIMATION LOGIC ---
+        const canvas = document.getElementById('roadCanvas');
+        const ctx = canvas.getContext('2d');
+        let cars = [];
+        
+        // Colors for cars
+        const carColors = ['#e74c3c', '#f1c40f', '#ecf0f1', '#9b59b6', '#34495e', '#2ecc71'];
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 200;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function spawnCar() {
+            const isTopLane = Math.random() > 0.5;
+            cars.push({
+                x: isTopLane ? canvas.width + 50 : -50,
+                y: isTopLane ? 110 : 150,
+                speed: (2 + Math.random() * 3) * (isTopLane ? -1 : 1),
+                color: carColors[Math.floor(Math.random() * carColors.length)],
+                width: 35 + Math.random() * 15,
+                height: 18
+            });
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Road
+            ctx.fillStyle = '#576574';
+            ctx.fillRect(0, 100, canvas.width, 100);
+
+            // Draw Road Lines
+            ctx.strokeStyle = '#feca57';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([20, 20]);
+            ctx.beginPath();
+            ctx.moveTo(0, 140);
+            ctx.lineTo(canvas.width, 140);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset dash
+
+            // Update and Draw Cars
+            for (let i = cars.length - 1; i >= 0; i--) {
+                let car = cars[i];
+                car.x += car.speed;
+
+                // Car body
+                ctx.fillStyle = car.color;
+                ctx.beginPath();
+                ctx.roundRect(car.x, car.y - car.height/2, car.width, car.height, 4);
+                ctx.fill();
+
+                // Windows
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(car.speed > 0 ? car.x + car.width - 10 : car.x + 2, car.y - car.height/2 + 2, 8, car.height - 4);
+
+                // Headlights (if night)
+                if (currentHour < 6 || currentHour > 18) {
+                    ctx.fillStyle = 'rgba(255, 255, 200, 0.6)';
+                    if (car.speed > 0) {
+                        ctx.beginPath();
+                        ctx.moveTo(car.x + car.width, car.y - car.height/2 + 2);
+                        ctx.lineTo(car.x + car.width + 40, car.y - 15);
+                        ctx.lineTo(car.x + car.width + 40, car.y + 15);
+                        ctx.fill();
+                    } else {
+                        ctx.beginPath();
+                        ctx.moveTo(car.x, car.y - car.height/2 + 2);
+                        ctx.lineTo(car.x - 40, car.y - 15);
+                        ctx.lineTo(car.x - 40, car.y + 15);
+                        ctx.fill();
+                    }
+                }
+
+                // Remove cars off screen
+                if (car.x > canvas.width + 100 || car.x < -100) {
+                    cars.splice(i, 1);
                 }
             }
 
-            // Update the text on the page
-            document.getElementById('totalCars').innerText = totalVehicles.toLocaleString();
-            document.getElementById('busiestDay').innerText = maxDay;
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('chartWrapper').style.display = 'block';
+            // Spawning Probability (Max cars per hour is ~600, so we scale it)
+            // If currentCarsPerHour is 600, it spawns constantly. If 0, it never spawns.
+            const spawnChance = (currentCarsPerHour / 600) * 0.15; 
+            if (Math.random() < spawnChance) {
+                spawnCar();
+            }
 
-            // 4. Build the chart
-            drawChart(hourlyByDate);
+            requestAnimationFrame(drawScene);
         }
 
-        function drawChart(hourlyByDate) {
-            const ctx = document.getElementById('trafficChart').getContext('2d');
-            const labels = ['12 AM','1 AM','2 AM','3 AM','4 AM','5 AM','6 AM','7 AM','8 AM','9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM','4 PM','5 PM','6 PM','7 PM','8 PM','9 PM','10 PM','11 PM'];
-            
-            // Generate a cool color palette for the lines
-            const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#34495e'];
-            let colorIndex = 0;
-
-            const datasets = Object.keys(hourlyByDate).map(dateStr => {
-                const color = colors[colorIndex % colors.length];
-                colorIndex++;
-                return {
-                    label: dateStr,
-                    data: hourlyByDate[dateStr],
-                    borderColor: color,
-                    backgroundColor: color + '20', // Add transparency for fill
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: false
-                };
-            });
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
-                    },
-                    scales: {
-                        x: { ticks: { maxTicksLimit: 8 } },
-                        y: { beginAtZero: true, title: { display: true, text: 'Cars per hour' } }
-                    }
-                }
-            });
+        function initAnimation() {
+            resizeCanvas();
+            drawScene();
         }
     </script>
 </body>
