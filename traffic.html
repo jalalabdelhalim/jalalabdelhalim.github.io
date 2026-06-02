@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Traffic Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 { margin-top: 0; font-size: 22px; color: #2c3e50; }
+        p { font-size: 14px; color: #7f8c8d; line-height: 1.5; }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .stat-box { text-align: center; width: 48%; }
+        .stat-num { font-size: 24px; font-weight: bold; color: #2980b9; }
+        .stat-label { font-size: 12px; color: #95a5a6; text-transform: uppercase; margin-top: 4px; }
+        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
+        #loading { text-align: center; color: #3498db; font-weight: bold; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Balcony Traffic Sensor 📸</h2>
+        <p>This dashboard automatically reads my computer vision logs to show how many cars drive by our place hour by hour.</p>
+        
+        <div id="loading">Loading and crunching data...</div>
+
+        <div class="chart-container" style="display: none;" id="chartWrapper">
+            <canvas id="trafficChart"></canvas>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-num" id="totalCars">0</div>
+                <div class="stat-label">Total Cars Logged</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="busiestDay">Loading</div>
+                <div class="stat-label">Busiest Day</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Tell PapaParse to find the CSV file in the same folder
+        Papa.parse("traffic_log.csv", {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                processData(results.data);
+            },
+            error: function(err) {
+                document.getElementById('loading').innerText = "Could not find traffic_log.csv! Make sure it is uploaded.";
+            }
+        });
+
+        function processData(data) {
+            let totalVehicles = 0;
+            const hourlyByDate = {};
+            const dateTotals = {};
+
+            // 2. Loop through every row in the CSV
+            data.forEach(row => {
+                if (!row.Timestamp) return;
+                
+                const dateObj = new Date(row.Timestamp);
+                if (isNaN(dateObj)) return; // Skip bad data
+
+                totalVehicles++;
+
+                // Format the date (e.g., "5/30/2026") and get the hour (0-23)
+                const dateStr = dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+                const hour = dateObj.getHours();
+
+                // Setup the arrays if this is the first time seeing this date
+                if (!hourlyByDate[dateStr]) {
+                    hourlyByDate[dateStr] = Array(24).fill(0);
+                    dateTotals[dateStr] = 0;
+                }
+                
+                // Add a car to that specific day and hour
+                hourlyByDate[dateStr][hour]++;
+                dateTotals[dateStr]++;
+            });
+
+            // 3. Find the busiest day
+            let maxDay = "";
+            let maxCount = 0;
+            for (const [day, count] of Object.entries(dateTotals)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    maxDay = day;
+                }
+            }
+
+            // Update the text on the page
+            document.getElementById('totalCars').innerText = totalVehicles.toLocaleString();
+            document.getElementById('busiestDay').innerText = maxDay;
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('chartWrapper').style.display = 'block';
+
+            // 4. Build the chart
+            drawChart(hourlyByDate);
+        }
+
+        function drawChart(hourlyByDate) {
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            const labels = ['12 AM','1 AM','2 AM','3 AM','4 AM','5 AM','6 AM','7 AM','8 AM','9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM','4 PM','5 PM','6 PM','7 PM','8 PM','9 PM','10 PM','11 PM'];
+            
+            // Generate a cool color palette for the lines
+            const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#34495e'];
+            let colorIndex = 0;
+
+            const datasets = Object.keys(hourlyByDate).map(dateStr => {
+                const color = colors[colorIndex % colors.length];
+                colorIndex++;
+                return {
+                    label: dateStr,
+                    data: hourlyByDate[dateStr],
+                    borderColor: color,
+                    backgroundColor: color + '20', // Add transparency for fill
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false
+                };
+            });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 8 } },
+                        y: { beginAtZero: true, title: { display: true, text: 'Cars per hour' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
