@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jalal's IoT Doorbell</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ECECEC;
+            --accent-color: #4da6ff;
+            --danger-color: #ff4d4d;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 { margin-bottom: 10px; letter-spacing: 1px; }
+        p { color: #888; margin-bottom: 40px; }
+
+        /* The Doorbell Button */
+        .bell-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #1e1e1e;
+            border: 4px solid var(--accent-color);
+            color: var(--accent-color);
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(77, 166, 255, 0.2), inset 0 0 20px rgba(77, 166, 255, 0.1);
+            transition: all 0.15s ease-in-out;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .bell-btn:active:not(:disabled) {
+            transform: scale(0.95);
+            box-shadow: 0 0 50px rgba(77, 166, 255, 0.6), inset 0 0 40px rgba(77, 166, 255, 0.4);
+            background: rgba(77, 166, 255, 0.1);
+        }
+
+        .bell-btn:disabled {
+            border-color: #555;
+            color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        #status-text {
+            margin-top: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            height: 24px; /* Prevents layout shift */
+        }
+        .success { color: #4CAF50; }
+        .error { color: var(--danger-color); }
+    </style>
+</head>
+<body>
+
+    <h1>IoT Doorbell Node</h1>
+    <p>Connected to Pi Infrastructure</p>
+
+    <button class="bell-btn" id="ring-btn">
+        <span>Ring</span>
+    </button>
+
+    <div id="status-text"></div>
+
+    <script>
+        const ringBtn = document.getElementById('ring-btn');
+        const statusText = document.getElementById('status-text');
+
+        // IMPORTANT: Replace this with your actual ngrok URL
+        const NGROK_URL = "https://staging-backpedal-eject.ngrok-free.dev/ring";
+
+        ringBtn.addEventListener('click', async () => {
+            // Disable button to prevent spamming
+            ringBtn.disabled = true;
+            ringBtn.innerHTML = "<span>Ringing...</span>";
+            statusText.textContent = "";
+            statusText.className = "";
+
+            try {
+                const response = await fetch(NGROK_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "ngrok-skip-browser-warning": "true" 
+                    }
+                });
+
+                if (response.ok) {
+                    statusText.textContent = "Ding Dong! Doorbell rung successfully.";
+                    statusText.className = "success";
+                    
+                    // Trigger phone vibration (Ding-Dong pattern: vibrate, pause, vibrate)
+                    // Note: This works on Android, but Apple blocks web vibrations on iOS.
+                    if (navigator.vibrate) {
+                        navigator.vibrate([200, 100, 200]);
+                    }
+                } else {
+                    throw new Error("Server rejected request.");
+                }
+            } catch (error) {
+                statusText.textContent = "dont use an iphone";
+                statusText.className = "error";
+            }
+
+            // 5-Second Cooldown
+            let countdown = 5;
+            const timer = setInterval(() => {
+                ringBtn.innerHTML = `<span style="font-size: 0.8em">Cooldown (${countdown}s)</span>`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(timer);
+                    ringBtn.disabled = false;
+                    ringBtn.innerHTML = "<span>Ring</span>";
+                    setTimeout(() => statusText.textContent = "", 2000);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
