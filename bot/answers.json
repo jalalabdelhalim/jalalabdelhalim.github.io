@@ -1,0 +1,867 @@
+{
+  "_howto": "Each intent: kw = keywords (single words match plurals and small typos; multi-word phrases score double). answer = string or list (random pick). cases = optional answers for specific sub-questions, checked in order; 'when' matches if ANY term appears. more = reply to 'tell me more'. generic = loses ties to specific topics. Links: [label](url). New line: \\n",
+  "followUps": [
+    "tell me more",
+    "more",
+    "go on",
+    "elaborate",
+    "what else",
+    "keep going",
+    "more info",
+    "details"
+  ],
+  "profanity": {
+    "contains": [
+      "fuck",
+      "shit",
+      "bitch",
+      "asshole",
+      "bastard",
+      "cunt",
+      "motherf",
+      "dumbass",
+      "jackass",
+      "wtf",
+      "stfu"
+    ],
+    "exact": [
+      "ass",
+      "dick",
+      "damn",
+      "hell",
+      "crap",
+      "piss",
+      "idiot",
+      "stupid",
+      "dumb",
+      "moron",
+      "loser",
+      "trash",
+      "shut up",
+      "screw you",
+      "suck",
+      "sucks"
+    ],
+    "answer": [
+      "Why are you cussing at me? 😢 I'm just sitting here trying to tell you about my research...",
+      "Wow. Why are you cussing at me? 🥺 I spent hours on this website, and this is how you talk to me?",
+      "Why are you cussing at me? 😔 My mom didn't raise me to be spoken to like that. I'm going to give you a second to think about what you just did.",
+      "Ouch. 💔 Why are you cussing at me? I built a whole chatbot just to be nice to you. Try again, nicely this time 🙏"
+    ]
+  },
+  "fallback": [
+    "Hmm, I'm not sure about that one 🤔 Try asking about my research, papers, hobbies, where I'm from, or when I graduate!",
+    "Good question, but I don't have an answer for that here 😅 You can always email me at [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com).",
+    "I didn't quite get that 🙃 Ask me about my work, my teaching, the games I play, or how to reach me."
+  ],
+  "noMore": "That's about all I've got on that one 😄 Ask me something else, or email me at [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com).",
+  "intents": [
+    {
+      "id": "greeting",
+      "generic": true,
+      "kw": [
+        "hi",
+        "hello",
+        "hey",
+        "hiya",
+        "salam",
+        "assalamu alaikum",
+        "marhaba",
+        "hallo",
+        "greetings",
+        "yo",
+        "good morning",
+        "good afternoon",
+        "good evening"
+      ],
+      "answer": [
+        "Hey! 👋 I'm Jalal. Ask me about my research, papers, projects, hobbies, or how to reach me.",
+        "Hi there! 😊 What would you like to know? Research, teaching, video games... anything really.",
+        "Hello! 👋 Thanks for stopping by. Feel free to ask me about my work or what I do for fun."
+      ]
+    },
+    {
+      "id": "smalltalk",
+      "generic": true,
+      "kw": [
+        "how are you",
+        "how's it going",
+        "hows it going",
+        "how are things",
+        "what's up",
+        "whats up",
+        "wassup",
+        "how you doing"
+      ],
+      "answer": [
+        "Doing well, thanks for asking! 😄 Probably fighting with a Proxmox server or a LaTeX error right now lol. What can I tell you about?",
+        "Pretty good! ☕ Busy with research as usual. What's on your mind?"
+      ]
+    },
+    {
+      "id": "about",
+      "generic": true,
+      "kw": [
+        "who are you",
+        "about you",
+        "about yourself",
+        "yourself",
+        "introduce",
+        "introduction",
+        "background",
+        "jalal",
+        "tell me about you"
+      ],
+      "answer": "I'm Jalal Abdel Halim 👋 a PhD candidate in Computer Science at the University of Toledo. I work on cybersecurity and machine learning, and I spend a lot of time building things with Proxmox, containers, and Linux.",
+      "more": "I'm originally from Lebanon 🇱🇧 and moved to the US for university. Outside of research I play table tennis, cook, travel, and play way too much PlayStation 🎮"
+    },
+    {
+      "id": "origin",
+      "kw": [
+        "where are you from",
+        "originally",
+        "grew up",
+        "grow up",
+        "hometown",
+        "lebanon",
+        "lebanese",
+        "country",
+        "nationality",
+        "born",
+        "home country",
+        "move to the us",
+        "moved"
+      ],
+      "answer": "I'm originally from Lebanon 🇱🇧 and grew up there. I moved to the US when I started university, and I've been in Toledo ever since.",
+      "more": "Arabic is my native language, and I'm learning German now too 🇩🇪"
+    },
+    {
+      "id": "location",
+      "kw": [
+        "where are you",
+        "where do you live",
+        "based",
+        "located",
+        "location",
+        "city",
+        "ohio",
+        "live now"
+      ],
+      "answer": "I'm based in Toledo, Ohio 📍 at the University of Toledo."
+    },
+    {
+      "id": "languages",
+      "kw": [
+        "language",
+        "speak",
+        "arabic",
+        "english",
+        "german",
+        "deutsch",
+        "bilingual",
+        "fluent"
+      ],
+      "cases": [
+        {
+          "when": [
+            "german",
+            "deutsch"
+          ],
+          "answer": "Ja, ich lerne Deutsch! 🇩🇪 Still learning though, so go easy on me 😅 Arabic is my native language, and I speak English too."
+        },
+        {
+          "when": [
+            "arabic"
+          ],
+          "answer": "Yep, Arabic is my native language 🇱🇧 I also speak English, and I'm learning German."
+        }
+      ],
+      "answer": "Arabic is my native language 🇱🇧 I also speak English, and I'm currently learning German 🇩🇪"
+    },
+    {
+      "id": "origin_story",
+      "kw": [
+        "how did you get into",
+        "got into",
+        "get into",
+        "why cybersecurity",
+        "why cyber",
+        "why security",
+        "interested in",
+        "inspired",
+        "kali",
+        "parrot",
+        "parrot os",
+        "linux journey"
+      ],
+      "answer": "Honestly, it started when I installed Parrot OS on my computer 🐧 I loved how Linux felt and all the stuff I could do with it, and that pulled me straight into cybersecurity.",
+      "more": "Then during my master's I realized I really liked research, which is how I ended up doing a PhD 📚"
+    },
+    {
+      "id": "why_phd",
+      "kw": [
+        "why phd",
+        "why a phd",
+        "why did you do a phd",
+        "why research",
+        "why not industry",
+        "industry",
+        "why grad school"
+      ],
+      "answer": "I found out during my master's that I really liked research 🔬 So instead of going straight to industry, I stayed for the PhD."
+    },
+    {
+      "id": "fun_fact",
+      "kw": [
+        "fun fact",
+        "interesting fact",
+        "something interesting",
+        "random fact",
+        "surprise",
+        "piano",
+        "music",
+        "instrument"
+      ],
+      "cases": [
+        {
+          "when": [
+            "piano",
+            "music",
+            "instrument"
+          ],
+          "answer": "Yes, I play piano! 🎹"
+        }
+      ],
+      "answer": "Fun fact: I play piano 🎹"
+    },
+    {
+      "id": "research",
+      "kw": [
+        "research",
+        "interest",
+        "interests",
+        "focus",
+        "phd",
+        "area",
+        "topic",
+        "dissertation",
+        "specialize",
+        "specialization",
+        "field"
+      ],
+      "answer": "My research sits where cybersecurity meets machine learning 🔐🤖 Mainly: black-box adversarial ML attacks in live networks, social media spam detection, AI-assisted driver awareness at busy intersections, and ML-based activity classification.",
+      "more": "The adversarial ML work is a big thread for me. Instead of attacking classifiers on offline datasets, we look at how black-box attacks actually behave in live network environments. You can read it [here](https://www.scitepress.org/Papers/2026/146389/146389.pdf) 📄"
+    },
+    {
+      "id": "current_work",
+      "kw": [
+        "working on",
+        "work on",
+        "currently",
+        "current project",
+        "right now",
+        "these days",
+        "lately",
+        "busy with"
+      ],
+      "answer": "Right now I'm building a tool that creates lab environments for students just from a prompt 🛠️"
+    },
+    {
+      "id": "favorite_paper",
+      "kw": [
+        "favorite paper",
+        "favourite paper",
+        "best paper",
+        "proudest",
+        "favorite publication",
+        "favorite research"
+      ],
+      "answer": "My favorite is the [cost-effective tool for senior activity classification and visualization](https://link.springer.com/chapter/10.1007/978-3-032-13056-3_20) 💙 I already had the hardware lying around and was just playing with it, and once we got the idea, we decided to write the paper."
+    },
+    {
+      "id": "publications",
+      "kw": [
+        "publication",
+        "paper",
+        "published",
+        "publish",
+        "conference",
+        "journal",
+        "chapter",
+        "ieee",
+        "springer",
+        "icissp",
+        "scholar",
+        "article"
+      ],
+      "answer": "Here are my recent ones 📄\n• [AI-Assisted Driver Situational Awareness at High Density Intersections](https://ieeexplore.ieee.org/abstract/document/11527458) (IEEE, 2026)\n• [Black-Box Adversarial ML Attacks in Live Networks](https://www.scitepress.org/Papers/2026/146389/146389.pdf) (ICISSP 2026)\n• [Senior Activity Classification and Visualization](https://link.springer.com/chapter/10.1007/978-3-032-13056-3_20) (AIR-RES 2025)\n• Social media spam detection ([book chapter](#publications), [IEEE CSCE 2023](https://ieeexplore.ieee.org/abstract/document/10487569))",
+      "more": "The senior activity one is my favorite, and the full list with authors is in the [Publications](#publications) section 👇"
+    },
+    {
+      "id": "adversarial",
+      "kw": [
+        "adversarial",
+        "attack",
+        "black-box",
+        "blackbox",
+        "black box",
+        "evasion",
+        "network",
+        "intrusion",
+        "robustness",
+        "classifier"
+      ],
+      "answer": "That's my ICISSP 2026 paper 🛡️ We looked at how black-box adversarial ML attacks behave in live network environments, not just on offline datasets. You can read it [here](https://www.scitepress.org/Papers/2026/146389/146389.pdf).",
+      "more": "Real networks are messy, so an attack that works great on a clean dataset doesn't always hold up live. That gap is what makes it interesting to me 🤓"
+    },
+    {
+      "id": "traffic",
+      "kw": [
+        "traffic",
+        "driver",
+        "intersection",
+        "vehicle",
+        "car",
+        "situational",
+        "awareness",
+        "vision",
+        "detection",
+        "camera",
+        "dashboard",
+        "computer vision"
+      ],
+      "answer": "Two things there! 🚗 I co-authored an IEEE paper on [AI-assisted driver situational awareness at high-density intersections](https://ieeexplore.ieee.org/abstract/document/11527458), and I built a real-time object detection pipeline that logs local vehicle traffic. [Here's the live dashboard](traffic.html) 📊"
+    },
+    {
+      "id": "spam",
+      "kw": [
+        "spam",
+        "social media",
+        "twitter",
+        "thesis",
+        "master's thesis",
+        "masters thesis"
+      ],
+      "answer": "My master's thesis was about building a versatile tool for social media spam detection 📬 It turned into an IEEE CSCE 2023 paper and a 2025 book chapter with De Gruyter Brill. [Read the thesis](https://etd.ohiolink.edu/acprod/odb_etd/ws/send_file/send?accession=toledo1683279391214158&disposition=inline)."
+    },
+    {
+      "id": "senior",
+      "kw": [
+        "senior",
+        "elderly",
+        "activity",
+        "classification",
+        "visualization",
+        "aging"
+      ],
+      "answer": "That's my AIR-RES 2025 paper, and honestly my favorite one 💙 It's a cost-effective tool that classifies and visualizes senior activity. I had the hardware lying around, started playing with it, and the idea came from there. [It's on Springer](https://link.springer.com/chapter/10.1007/978-3-032-13056-3_20)."
+    },
+    {
+      "id": "projects",
+      "kw": [
+        "project",
+        "built",
+        "build",
+        "portfolio",
+        "side project",
+        "demo",
+        "app",
+        "tool",
+        "made"
+      ],
+      "answer": "A couple of personal ones 🛠️\n• [Browser Fingerprinting & OSINT Inspector](inspector.html): shows how much your browser leaks about you without asking.\n• [Real-Time Traffic Analytics Pipeline](traffic.html): object detection that keeps logging local vehicle traffic.",
+      "more": "I also built and run a Proxmox-based virtual lab that supports 50+ students across two courses 🖥️ And right now I'm building a tool that creates lab environments for students just from a prompt."
+    },
+    {
+      "id": "privacy",
+      "kw": [
+        "privacy",
+        "fingerprint",
+        "fingerprinting",
+        "osint",
+        "browser",
+        "inspector",
+        "tracking",
+        "metadata",
+        "audit"
+      ],
+      "answer": "The Browser Fingerprinting & OSINT Inspector uses plain client-side Web APIs to show what your browser gives away: hardware, network, environment details 🕵️ [Try it on yourself](inspector.html), it's a little scary."
+    },
+    {
+      "id": "skills",
+      "kw": [
+        "skill",
+        "proxmox",
+        "linux",
+        "docker",
+        "container",
+        "sysadmin",
+        "administration",
+        "automation",
+        "virtualization",
+        "hypervisor",
+        "infrastructure",
+        "tech stack",
+        "stack",
+        "server"
+      ],
+      "answer": "I'm strongest on the systems side 🐧 setting up and managing Proxmox servers, deploying containerized services, Linux command-line work, and automating everything I can. I built a production-grade Proxmox lab that supports 50+ students across two courses.",
+      "more": "On the ML side I work on adversarial attacks, spam detection, and classification models, so I bounce between infrastructure and research a lot 🔄"
+    },
+    {
+      "id": "programming",
+      "kw": [
+        "programming language",
+        "favorite language",
+        "favourite language",
+        "language do you use",
+        "python",
+        "code",
+        "coding",
+        "programming",
+        "javascript",
+        "java",
+        "c++"
+      ],
+      "answer": "Python 🐍 It's easy to learn and you can do a lot with it."
+    },
+    {
+      "id": "homelab",
+      "kw": [
+        "homelab",
+        "home lab",
+        "raspberry pi",
+        "raspberry",
+        "pi",
+        "setup",
+        "hardware at home"
+      ],
+      "answer": "I actually don't have a homelab 😅 Just a Raspberry Pi that I'm currently using as my LaTeX server."
+    },
+    {
+      "id": "certifications",
+      "kw": [
+        "certification",
+        "certificate",
+        "cert",
+        "certified",
+        "comptia",
+        "security+",
+        "oscp",
+        "cissp",
+        "google it"
+      ],
+      "answer": "I did the Google IT certification 📜 but honestly, I didn't find it that useful, so I'm not really using it."
+    },
+    {
+      "id": "cyberforce",
+      "kw": [
+        "competition",
+        "ctf",
+        "capture the flag",
+        "cyberforce",
+        "cyber force",
+        "compete",
+        "team",
+        "doe"
+      ],
+      "answer": "CyberForce! 🏆 I prepare and train our students before we head to the competition."
+    },
+    {
+      "id": "courses",
+      "kw": [
+        "course",
+        "class",
+        "ta for",
+        "ta'd",
+        "teaching assistant",
+        "ta",
+        "grade",
+        "grading",
+        "forensic",
+        "forensics",
+        "network security",
+        "hacking class"
+      ],
+      "answer": "I've TA'd Network Security, Computer and Network Security, and Computer Hacking & Forensic Analysis 🧑‍🏫"
+    },
+    {
+      "id": "workshops",
+      "kw": [
+        "workshop",
+        "outreach",
+        "high school",
+        "middle school",
+        "kids",
+        "teens",
+        "students hack",
+        "camp"
+      ],
+      "answer": "I run workshops mostly for high school and middle school students 🧑‍💻 I teach them how to use Linux, and the fun part is usually hacking: they get to break into another machine and access it themselves."
+    },
+    {
+      "id": "teaching",
+      "kw": [
+        "teach",
+        "teaching",
+        "professor",
+        "faculty",
+        "career",
+        "future",
+        "goal",
+        "plan",
+        "after phd",
+        "after your phd",
+        "after graduation",
+        "want to do",
+        "want to be",
+        "long term",
+        "presenting",
+        "public speaking"
+      ],
+      "answer": "I want to become a professor 🎓 Funny thing is, I used to hate presenting. But the more I did it, the better I got, and now I actually enjoy it. Plus I get to talk about stuff I really like.",
+      "more": "Right now I TA, train our CyberForce team, and run hacking workshops for middle and high school students, so I get to teach a lot already 😄"
+    },
+    {
+      "id": "postdoc",
+      "kw": [
+        "postdoc",
+        "post-doc",
+        "job",
+        "jobs",
+        "hire",
+        "hiring",
+        "position",
+        "looking for",
+        "open to",
+        "employment",
+        "work with you",
+        "opportunity",
+        "recruit"
+      ],
+      "answer": "I'm looking for a postdoc 🔎 ideally somewhere I can use hypervisors like Proxmox to build isolated environments, run simulations, and solve real problems. In an isolated environment there's no risk of exposing the network to something bad, which makes it perfect for security work.",
+      "more": "If you have something in mind, email me at [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com) 📬"
+    },
+    {
+      "id": "graduation",
+      "kw": [
+        "graduate",
+        "graduating",
+        "graduation",
+        "grad date",
+        "graduation date",
+        "finish",
+        "finishing",
+        "done with",
+        "defend",
+        "defense",
+        "complete"
+      ],
+      "answer": "I'm expecting to finish my PhD in December 2027 🎓"
+    },
+    {
+      "id": "education",
+      "kw": [
+        "education",
+        "degree",
+        "university",
+        "school",
+        "college",
+        "toledo",
+        "gpa",
+        "bachelor",
+        "master",
+        "masters",
+        "doctorate",
+        "study",
+        "studied",
+        "studying",
+        "major"
+      ],
+      "answer": "All three of my degrees are from the University of Toledo 🎓\n• PhD, Computer Science (2023 to Dec 2027, expected), GPA 3.8\n• MS, Cyber Security (2021 to 2023), GPA 3.7\n• BS, Information Technology (2017 to 2021), GPA 3.5"
+    },
+    {
+      "id": "advisor",
+      "kw": [
+        "advisor",
+        "adviser",
+        "supervisor",
+        "mentor",
+        "weiqing",
+        "dr sun"
+      ],
+      "answer": "My PhD advisor is Dr. Weiqing Sun at the University of Toledo 👨‍🏫 He's a co-author on most of my papers."
+    },
+    {
+      "id": "games",
+      "kw": [
+        "game",
+        "gaming",
+        "gamer",
+        "video game",
+        "video games",
+        "playstation",
+        "ps5",
+        "ps4",
+        "console",
+        "pc",
+        "xbox",
+        "watch dogs",
+        "watchdogs",
+        "minecraft",
+        "gta",
+        "grand theft auto",
+        "hogwarts",
+        "hogwarts legacy"
+      ],
+      "cases": [
+        {
+          "when": [
+            "watch dogs",
+            "watchdogs"
+          ],
+          "answer": "Watch Dogs!! 💻 I've played all of them. A hacking game? Of course I love it 😎"
+        },
+        {
+          "when": [
+            "minecraft"
+          ],
+          "answer": "Yes, Minecraft ⛏️ Classic. Never gets old."
+        },
+        {
+          "when": [
+            "gta",
+            "grand theft auto"
+          ],
+          "answer": "GTA 🚗 obviously. Who doesn't?"
+        },
+        {
+          "when": [
+            "hogwarts",
+            "hogwarts legacy"
+          ],
+          "answer": "I'm really into Hogwarts Legacy right now 🧙"
+        },
+        {
+          "when": [
+            "xbox",
+            "pc"
+          ],
+          "answer": "I'm a PlayStation guy 🎮"
+        }
+      ],
+      "answer": "I don't have one favorite, I'm all over the place 😅 But I've played every Watch Dogs game, and I love Minecraft, GTA, and Hogwarts Legacy. All on my PlayStation 🎮"
+    },
+    {
+      "id": "hobbies",
+      "kw": [
+        "hobby",
+        "hobbies",
+        "fun",
+        "free time",
+        "spare time",
+        "weekend",
+        "sport",
+        "sports",
+        "table tennis",
+        "ping pong",
+        "ping-pong",
+        "tennis",
+        "run",
+        "running",
+        "runner",
+        "jog",
+        "jogging",
+        "marathon",
+        "race",
+        "play",
+        "relax",
+        "outside of work",
+        "cook",
+        "cooking",
+        "chef",
+        "travel",
+        "traveling",
+        "travelling",
+        "trip",
+        "explore"
+      ],
+      "cases": [
+        {
+          "when": [
+            "table tennis",
+            "ping pong",
+            "ping-pong"
+          ],
+          "answer": "Yes!! 🏓 Table tennis is my thing. I'm way better at it than regular tennis, and I actually used to play in the table tennis club."
+        },
+        {
+          "when": [
+            "tennis"
+          ],
+          "answer": "I can play tennis 🎾 but it's quite tiring lol. I'm way better at table tennis, I used to play in the club 🏓"
+        },
+        {
+          "when": [
+            "run",
+            "running",
+            "runner",
+            "jog",
+            "jogging",
+            "marathon",
+            "race"
+          ],
+          "answer": "I actually just recently started running 🏃 No races yet though!"
+        },
+        {
+          "when": [
+            "cook",
+            "cooking",
+            "chef"
+          ],
+          "answer": "Yes, I love cooking 🍳 It's one of my favorite ways to unwind."
+        },
+        {
+          "when": [
+            "travel",
+            "traveling",
+            "travelling",
+            "trip",
+            "explore"
+          ],
+          "answer": "I love traveling ✈️ especially exploring new cities."
+        }
+      ],
+      "answer": [
+        "Table tennis is my main one 🏓 (I used to play in the club). I also play tennis, recently started running, love cooking and traveling to new cities, and I play a lot of PlayStation 🎮",
+        "Outside of research? 🏓 table tennis, 🎾 tennis, 🏃 running, 🍳 cooking, ✈️ traveling, and 🎮 video games. Basically anything that gets me away from a terminal for a bit lol."
+      ],
+      "more": "Oh, and I play piano too 🎹"
+    },
+    {
+      "id": "coffee",
+      "kw": [
+        "coffee",
+        "tea",
+        "caffeine",
+        "drink",
+        "espresso",
+        "latte"
+      ],
+      "answer": "Coffee ☕ for sure."
+    },
+    {
+      "id": "food",
+      "kw": [
+        "food",
+        "favorite food",
+        "favourite food",
+        "eat",
+        "dish",
+        "meal",
+        "burger",
+        "burgers",
+        "hungry",
+        "cuisine"
+      ],
+      "answer": "This is probably disappointing, but... burgers 🍔 honestly."
+    },
+    {
+      "id": "schedule",
+      "kw": [
+        "morning person",
+        "night owl",
+        "night person",
+        "early bird",
+        "sleep",
+        "wake up",
+        "productive",
+        "best time"
+      ],
+      "answer": "Neither, honestly 😄 I'm an afternoon person."
+    },
+    {
+      "id": "latex",
+      "kw": [
+        "latex",
+        "tex",
+        "texforge",
+        "overleaf",
+        "latex link",
+        "latex server"
+      ],
+      "answer": "Here's the LaTeX server 📝 [texforge-pi.jalal-latex.workers.dev](https://texforge-pi.jalal-latex.workers.dev/)"
+    },
+    {
+      "id": "resume",
+      "kw": [
+        "resume",
+        "cv",
+        "curriculum vitae",
+        "download",
+        "pdf"
+      ],
+      "answer": "Sure! 📄 Grab whichever fits: [US Resume](resume.pdf) or [EU CV](resume_eu.pdf)."
+    },
+    {
+      "id": "contact",
+      "kw": [
+        "contact",
+        "email",
+        "e-mail",
+        "reach",
+        "linkedin",
+        "connect",
+        "message",
+        "collaborate",
+        "collaboration",
+        "get in touch"
+      ],
+      "answer": "Best way is email 📬 [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com). You can also connect with me on [LinkedIn](https://www.linkedin.com/in/jalalabdelhalim)."
+    },
+    {
+      "id": "bot",
+      "generic": true,
+      "kw": [
+        "bot",
+        "chatbot",
+        "llm",
+        "gpt",
+        "chatgpt",
+        "are you real",
+        "is this real",
+        "is this you",
+        "really you",
+        "human",
+        "ai",
+        "clone"
+      ],
+      "answer": "Honestly? This is a scripted version of me 🤖 No LLM, no server: it matches keywords right in your browser, and the typing is just for fun lol. For the real me, email [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com)."
+    },
+    {
+      "id": "thanks",
+      "generic": true,
+      "kw": [
+        "thanks",
+        "thank you",
+        "thank",
+        "thx",
+        "ty",
+        "appreciate",
+        "great",
+        "cool",
+        "awesome",
+        "nice",
+        "bye",
+        "goodbye",
+        "see you",
+        "cya"
+      ],
+      "answer": [
+        "Anytime! 😊 If you want to talk more, my email is [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com).",
+        "Glad I could help! Take care 👋",
+        "No problem! Feel free to reach out anytime 🙌"
+      ]
+    }
+  ]
+}
