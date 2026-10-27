@@ -109,8 +109,8 @@
             <button role="tab" id="tab-eu" aria-selected="false" data-version="eu">EU CV</button>
         </div>
         <div class="downloads">
-            <a class="btn" id="download-btn" href="resume.pdf" download="Jalal_AbdelHalim_CV_US.pdf">&#8595; Download PDF</a>
-            <a class="btn secondary" id="view-btn" href="resume.pdf" target="_blank" rel="noopener">Open PDF</a>
+            <a class="btn" id="download-btn" href="resume.pdf?v=2" download="Jalal_AbdelHalim_CV_US.pdf">&#8595; Download PDF</a>
+            <a class="btn secondary" id="view-btn" href="resume.pdf?v=2" target="_blank" rel="noopener">Open PDF</a>
         </div>
     </div>
 
@@ -298,8 +298,8 @@
     <script>
         (function () {
             const PDF = {
-                us: { href: "resume.pdf", name: "Jalal_AbdelHalim_CV_US.pdf", loc: "Toledo, OH" },
-                eu: { href: "resume_eu.pdf", name: "Jalal_AbdelHalim_CV_Europe.pdf", loc: "Toledo, USA" }
+                us: { href: "resume.pdf?v=2", name: "Jalal_AbdelHalim_CV_US.pdf", loc: "Toledo, OH" },
+                eu: { href: "resume_eu.pdf?v=2", name: "Jalal_AbdelHalim_CV_Europe.pdf", loc: "Toledo, USA" }
             };
             const download = document.getElementById("download-btn");
             const view = document.getElementById("view-btn");
