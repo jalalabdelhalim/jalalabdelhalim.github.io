@@ -1,0 +1,239 @@
+%============================================================================
+%  Jalal Abdel Halim -- Academic CV (US postdoctoral applications)
+%  Compile with pdfLaTeX (Overleaf default works).
+%
+%  ATS notes:
+%   - Single column, no tables/graphics/icons, standard section names.
+%   - \pdfgentounicode + glyphtounicode make the PDF text parse cleanly.
+%   - Save the PDF as: Jalal_AbdelHalim_CV.pdf
+%
+%  Placeholders that were not yet filled in have been removed or commented out.
+%============================================================================
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{charter}
+\usepackage[letterpaper,margin=0.7in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\hypersetup{
+  pdftitle={Jalal Abdel Halim - Curriculum Vitae},
+  pdfauthor={Jalal Abdel Halim},
+  pdfkeywords={cybersecurity, machine learning, adversarial machine learning,
+               intrusion detection, spam detection, large language models,
+               privacy-preserving AI, postdoctoral researcher}
+}
+
+\pagestyle{plain}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Section headings: plain uppercase text + rule (parses cleanly in ATS)
+\titleformat{\section}{\large\bfseries}{}{0pt}{\MakeUppercase}[\vspace{-6pt}\rule{\linewidth}{0.5pt}]
+\titlespacing*{\section}{0pt}{8pt}{5pt}
+
+\setlist[itemize]{leftmargin=1.2em, itemsep=1.5pt, topsep=2pt, parsep=0pt}
+
+% \entry{Title / Degree}{Dates}{Organization}{Location}
+\newcommand{\entry}[4]{%
+  \textbf{#1} \hfill #2\par
+  \textit{#3} \hfill #4\par\vspace{1pt}}
+
+\newcommand{\me}{\textbf{J.~Abdel~Halim}}
+
+\begin{document}
+
+%------------------------------------------------------------------ HEADER
+\begin{center}
+  {\LARGE\bfseries Jalal Abdel Halim}\par\vspace{4pt}
+  Toledo, OH \,|\,
+  \href{mailto:Jalal.AbdelHalim@rockets.utoledo.edu}{Jalal.AbdelHalim@rockets.utoledo.edu}\par
+  \href{https://www.linkedin.com/in/jalalabdelhalim}{linkedin.com/in/jalalabdelhalim} \,|\,
+  \href{https://orcid.org/0000-0001-9829-8228}{ORCID: 0000-0001-9829-8228}\par
+  \href{https://scholar.google.com/citations?user=YYKzHkcAAAAJ}{Google Scholar: scholar.google.com/citations?user=YYKzHkcAAAAJ}
+  % \,|\, \href{https://github.com/XXXX}{github.com/XXXX}
+
+\end{center}
+
+%------------------------------------------------------------------ PROFILE
+\section{Research Interests}
+Cybersecurity and machine learning: adversarial robustness of ML-based intrusion
+detection, multimodal (text, image, video) spam and threat detection, and
+privacy-preserving AI systems, including locally deployed large language models
+and low-cost edge devices that keep sensitive data on-premises. Ph.D.\ candidate
+with five publications (IEEE, Springer Nature, De Gruyter Brill, SciTePress) and
+hands-on experience building the systems used in experimental research.
+
+%------------------------------------------------------------------ EDUCATION
+\section{Education}
+\entry{Ph.D., Computer Science}{2023 -- Dec.\ 2027 (expected)}
+      {University of Toledo}{Toledo, OH}
+\begin{itemize}
+  \item Advisor: Prof.\ Weiqing Sun
+  \item GPA: 3.8/4.0 \quad Focus: cybersecurity, machine learning
+\end{itemize}
+\vspace{3pt}
+\entry{M.S., Cyber Security \textmd{(GPA 3.7/4.0)}}{2021 -- May 2023}
+      {University of Toledo}{Toledo, OH}
+\vspace{3pt}
+\entry{B.S., Information Technology \textmd{(GPA 3.5/4.0; Dean's List)}}{2017 -- May 2021}
+      {University of Toledo}{Toledo, OH}
+
+%------------------------------------------------------------------ RESEARCH
+\section{Research Experience}
+\entry{Graduate Research Assistant}{Aug.\ 2021 -- Present}
+      {University of Toledo, Department of Electrical Engineering and Computer Science}{Toledo, OH}
+\begin{itemize}
+  \item \textbf{Adversarial ML for intrusion detection:} Evaluated Random Forest,
+        Decision Tree, and SVM intrusion detectors trained on CICIDS-2017 against
+        black-box Genetic Algorithm and Particle Swarm Optimization attacks.
+        Implemented the live-network validation pipeline on an isolated Proxmox testbed,
+        reconstructing adversarial flows into PCAPs and replaying them with tcpreplay.
+        Showed 100\% evasion of tree-based models, and that protocol-driven attacks
+        (FTP, SSH, PortScan) stayed fully functional after perturbation while
+        high-volume floods lost most of their impact (ICISSP 2026).
+  \item \textbf{Multimodal spam detection:} Built a real-time, user-trained tool that
+        screens text, images, and video on X/Twitter, Facebook, and Reddit and alerts
+        users before they engage with a post. Benchmarked BERT, DistilBERT,
+        DistilRoBERTa, ResNet-50, MobileNet, and classical baselines on 22,854 tweets
+        and 12,144 images; selected MobileNet for images (92.4\% accuracy) and logistic
+        regression for text on the accuracy--latency trade-off (IEEE CSCE 2023;
+        De Gruyter Brill 2025).
+  \item \textbf{Privacy-preserving activity monitoring:} Designed a sub-\$60 Raspberry Pi
+        and camera system that classifies five daily activities of seniors living alone
+        and shows caregivers an anonymized 3D model on a web dashboard instead of raw
+        images. Collected and labeled 40,724 images and compared six classifiers;
+        EfficientNet-B0 reached 92\% accuracy and 93\% precision (AIR-RES 2025,
+        Springer CCIS).
+  \item \textbf{Privacy-preserving local LLM assistant:} Integrated an on-premises large
+        language model into the course lab platform as a student assistant, keeping
+        all student data on local infrastructure.
+  \item \textbf{AI-assisted driver situational awareness:} Co-developed a traffic-light phase
+        predictor that estimates seconds-to-green from dashcam video, using ResNet-18
+        features from 6-frame sequences; on 3,541 frames from two Toledo intersections,
+        Gaussian Naive Bayes and Random Forest exceeded 91\% accuracy with under 3\,s
+        mean error. SUMO simulation of a GLOSA-based smart driver (via TraCI) raised
+        average speed by 22\% and cut total waiting time by 12\% versus baseline
+        traffic at a congested intersection (IEEE MOST 2026).
+\end{itemize}
+
+%------------------------------------------------------------------ TEACHING
+\section{Teaching and Outreach}
+\entry{Graduate Teaching Assistant}{Aug.\ 2021 -- Present}
+      {University of Toledo}{Toledo, OH}
+\begin{itemize}
+  \item Supported 55+ students across two courses:
+        led hands-on troubleshooting, graded assignments, and explained technical
+        concepts one-on-one.
+  \item Re-engineered the course lab infrastructure, cutting environment setup time
+        from several hours to under 30 minutes.
+  \item Administered concurrent lab environments and user access for all enrolled
+        students, and handled system configuration and hardware and network
+        troubleshooting for the teaching lab.
+\end{itemize}
+\vspace{3pt}
+\entry{Workshop Organizer, Linux for Middle School Students}{}
+      {University of Toledo}{Toledo, OH}
+\begin{itemize}
+  \item Organized and led a hands-on Linux workshop and competition for 60 middle
+        school students.
+\end{itemize}
+
+%------------------------------------------------------------------ PUBLICATIONS
+\section{Publications}
+\textit{Conference Proceedings}
+\begin{enumerate}[label={[C\arabic*]}, leftmargin=2.6em, itemsep=3pt, topsep=3pt]
+  \item H.~Sun, \me, B.~Dwa, E.~Chou, W.~Sun, ``AI-Assisted Driver Situational
+        Awareness for Improved Traffic Flow at High Density Intersections,''
+        in \textit{Proc.\ 2026 IEEE 4th Int.\ Conf.\ on Mobility, Operations, Services
+        and Technologies (MOST)}, pp.~86--94, May 2026.
+  \item U.~B.~Guntupalli, M.~Pujari, \me, W.~Sun, ``Investigating the Influence of
+        Black-Box Adversarial Machine Learning Attacks in Live Network Environments,''
+        in \textit{Proc.\ 12th Int.\ Conf.\ on Information Systems Security and Privacy
+        (ICISSP)}, vol.~1, SciTePress, pp.~462--473, 2026. doi:10.5220/0014638900004061
+  \item \me, W.~Sun, ``A Cost-Effective Tool for Senior Activity Classification and
+        Visualization,'' in \textit{AI Revolution: Research, Ethics and Society
+        (AIR-RES 2025)}, Communications in Computer and Information Science, vol.~2723,
+        Springer Nature, pp.~267--278, 2026. doi:10.1007/978-3-032-13056-3\_20
+  \item \me, W.~Sun, ``Towards Building a Versatile Tool for Social Media Spam
+        Detection,'' in \textit{Proc.\ 2023 Congress in Computer Science, Computer
+        Engineering, \& Applied Computing (CSCE)}, IEEE, pp.~2378--2384, Jul.\ 2023.
+        doi:10.1109/CSCE60160.2023.00385
+\end{enumerate}
+
+\textit{Book Chapters}
+\begin{enumerate}[label={[B\arabic*]}, leftmargin=2.6em, itemsep=3pt, topsep=3pt]
+  \item \me, W.~Sun, ``Empowering Users with an Effective Tool for Social Media Spam
+        Detection,'' in \textit{Cybersecurity: Cyber Defense, Privacy and Cyber
+        Warfare}, De Gruyter Brill, pp.~333--353, 2025.
+        doi:10.1515/9783111436548-015
+\end{enumerate}
+
+% \textit{In Preparation / Under Review}
+% \begin{enumerate}[label={[P\arabic*]}, leftmargin=2.6em, itemsep=3pt, topsep=3pt]
+%   \item \me, [co-authors], ``[Title],'' [target venue], 2027.
+% \end{enumerate}
+
+%------------------------------------------------------------------ PRESENTATIONS
+\section{Presentations}
+\begin{itemize}
+  \item ``Investigating the Influence of Black-Box Adversarial Machine Learning Attacks
+        in Live Network Environments,'' College of Engineering Design Expo,
+        University of Toledo, 2026.
+  % \item [Conference talks at CSCE 2023 / ICISSP 2026 / MOST 2026, if he presented]
+\end{itemize}
+
+%------------------------------------------------------------------ INDUSTRY
+\section{Industry Experience}
+\entry{Information Technology Intern}{May 2022 -- Aug.\ 2022}
+      {O-I Glass}{Perrysburg, OH}
+\begin{itemize}
+  \item Built Power BI reports combining data from Rapid7 and ServiceNow to give
+        security and IT staff a consolidated view of system status.
+  \item Wrote automation scripts for data extraction, improving the speed and
+        accuracy of recurring administrative tasks.
+  \item Managed wireless access points and device security using enterprise
+        network-management platforms, and coordinated projects with global colleagues.
+\end{itemize}
+
+%------------------------------------------------------------------ SKILLS
+\section{Skills and Certifications}
+\begin{itemize}
+  \item \textbf{Machine Learning / AI:} transformer text models (BERT, DistilBERT,
+        DistilRoBERTa), CNN image models (ResNet-50, MobileNetV2, EfficientNet-B0),
+        classical ML (scikit-learn), black-box adversarial attacks (GA, PSO),
+        local LLM deployment, TF-IDF feature extraction
+  \item \textbf{Security:} penetration testing, ML-based intrusion detection,
+        CICIDS-2017, CICFlowMeter, tcpreplay, Kali Linux, Fortinet, FortiNAC, Rapid7
+  \item \textbf{Infrastructure:} Proxmox VE, VMware ESXi, containerization,
+        Ubuntu Server, Linux system administration, Raspberry Pi
+  \item \textbf{Programming \& Tools:} Python, Java, Selenium, web data collection
+        (snscrape, Instaloader), Power BI, SUMO and TraCI traffic simulation
+  \item \textbf{Certifications:} EXIN DevOps Foundation (2021); ITIL Foundation,
+        AXELOS (2021); Google IT Support Professional Certificate (2021)
+\end{itemize}
+
+
+%------------------------------------------------------------------ SERVICE (optional)
+% \section{Professional Service}
+% \begin{itemize}
+%   \item Reviewer: [conference/journal], [year]
+% \end{itemize}
+
+%------------------------------------------------------------------ REFERENCES
+\section{References}
+\begin{itemize}
+  \item \textbf{Prof.\ Weiqing Sun} (Ph.D.\ advisor), Professor, Computer Science and
+        Engineering Technology Program, Department of Engineering Technology,
+        University of Toledo, Toledo, OH. Weiqing.Sun@utoledo.edu, +1 (419) 530-3273
+  \item \textbf{Dr.\ Medha Pujari} (research collaborator), Assistant Professor of
+        Computer Science, Department of Computer Science and Information Technology,
+        Western New England University, Springfield, MA.
+\end{itemize}
+
+\end{document}

@@ -801,7 +801,7 @@
         "download",
         "pdf"
       ],
-      "answer": "Sure! 📄 Grab whichever fits: [US Resume](resume.pdf) or [EU CV](resume_eu.pdf)."
+      "answer": "Sure! 📄 You can [read it online](resume.html), or grab the PDF that fits: [US CV](resume.pdf) or [EU CV](resume_eu.pdf)."
     },
     {
       "id": "contact",

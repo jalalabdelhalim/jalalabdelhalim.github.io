@@ -133,13 +133,13 @@
         <img src="profile.jpeg" alt="Jalal Abdel Halim" class="profile-img">
         <h1>Jalal Abdel Halim</h1>
         <div class="contact-info">
-            jalalabdelhalim1@gmail.com | <a href="https://www.linkedin.com/in/jalalabdelhalim" target="_blank">LinkedIn</a> | <a href="resume.pdf" download="Jalal_Abdel_Halim_Resume_US.pdf">US Resume</a> | <a href="resume_eu.pdf" download="Jalal_Abdel_Halim_CV_EU.pdf">EU CV</a>
+            jalalabdelhalim1@gmail.com | <a href="https://www.linkedin.com/in/jalalabdelhalim" target="_blank">LinkedIn</a> | <a href="resume.html">View CV</a> | <a href="resume.pdf" download="Jalal_AbdelHalim_CV_US.pdf">US CV (PDF)</a> | <a href="resume_eu.pdf" download="Jalal_AbdelHalim_CV_Europe.pdf">EU CV (PDF)</a>
         </div>
     </header>
 
     <section id="summary" class="fade-in">
         <p style="font-size: 1.1em; border-left: 4px solid var(--accent-color); padding-left: 15px;">
-            PhD Candidate in Computer Science specializing in Cyber Security and Machine Learning. Proficient in setting up and managing Proxmox servers and deploying containerized solutions. Skilled in Linux command-line operations, system administration, and automation.
+            PhD Candidate in Computer Science working at the intersection of cybersecurity and machine learning: adversarial robustness of ML-based intrusion detection, multimodal spam and threat detection, and privacy-preserving AI, from low-cost edge devices to locally hosted large language models. Five publications with IEEE, Springer Nature, De Gruyter Brill, and SciTePress, backed by hands-on experience building the Proxmox, container, and Linux infrastructure behind the research.
         </p>
     </section>
 
@@ -150,7 +150,7 @@
         <h3>Master of Science in Cyber Security</h3>
         <p>University of Toledo, Toledo, OH <br> <span class="date">2021 - May 2023</span> | GPA: 3.7/4.0</p>
         <h3>Bachelor of Science in Information Technology</h3>
-        <p>University of Toledo, Toledo, OH <br> <span class="date">2017 - 2021</span> | GPA: 3.5/4.0</p>
+        <p>University of Toledo, Toledo, OH <br> <span class="date">2017 - May 2021</span> | GPA: 3.5/4.0</p>
     </section>
 
     <section id="publications">
@@ -393,7 +393,7 @@
                 // Only allow safe link types from the answers file
                 a.href = /^(https?:|mailto:|#|[\w\-\/]+\.(html|pdf)$)/i.test(href) ? href : "#";
                 if (/^https?:/.test(href) || /\.html$/.test(href)) { a.target = "_blank"; a.rel = "noopener"; }
-                if (/\.pdf$/.test(href)) a.setAttribute("download", href.includes("eu") ? "Jalal_Abdel_Halim_CV_EU.pdf" : "Jalal_Abdel_Halim_Resume_US.pdf");
+                if (/\.pdf$/.test(href)) a.setAttribute("download", href.includes("eu") ? "Jalal_AbdelHalim_CV_Europe.pdf" : "Jalal_AbdelHalim_CV_US.pdf");
                 return a;
             };
 
