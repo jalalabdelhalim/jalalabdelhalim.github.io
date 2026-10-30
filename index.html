@@ -391,7 +391,7 @@
             const makeLink = (href) => {
                 const a = document.createElement('a');
                 // Only allow safe link types from the answers file
-                a.href = /^(https?:|mailto:|#|[\w\-\/]+\.(html|pdf)$)/i.test(href) ? href : "#";
+                a.href = /^(https?:|mailto:|#|[\w\-\/]+\.(html|pdf|asc)$)/i.test(href) ? href : "#";
                 if (/^https?:/.test(href) || /\.html$/.test(href)) { a.target = "_blank"; a.rel = "noopener"; }
                 if (/\.pdf$/.test(href)) a.setAttribute("download", href.includes("eu") ? "Jalal_AbdelHalim_CV_Europe.pdf" : "Jalal_AbdelHalim_CV_US.pdf");
                 return a;
