@@ -838,10 +838,10 @@
             "pgp key",
             "secure email"
           ],
-          "answer": "Yes! 🔐 Grab my [PGP public key](pgp-key.asc) and encrypt your email to me at [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com).\nFingerprint: B270 F880 5F29 5492 26E3  BE22 FFC5 FA38 0051 15A6"
+          "answer": "Yes! 🔐 Grab my [PGP public key](pgp-key.asc) and encrypt your email to me at [jalalabdelhalim1@gmail.com](mailto:jalalabdelhalim1@gmail.com).\nOr pull it from keys.openpgp.org:\ngpg --keyserver hkps://keys.openpgp.org --search-keys jalal6d6f@gmail.com\nFingerprint: B270 F880 5F29 5492 26E3  BE22 FFC5 FA38 0051 15A6"
         }
       ],
-      "more": "If you want end-to-end encryption, import my [PGP public key](pgp-key.asc) (ed25519). Fingerprint: B270 F880 5F29 5492 26E3  BE22 FFC5 FA38 0051 15A6"
+      "more": "If you want end-to-end encryption, import my [PGP public key](pgp-key.asc) (ed25519), or fetch it from keys.openpgp.org:\ngpg --keyserver hkps://keys.openpgp.org --search-keys jalal6d6f@gmail.com\nFingerprint: B270 F880 5F29 5492 26E3  BE22 FFC5 FA38 0051 15A6"
     },
     {
       "id": "bot",
